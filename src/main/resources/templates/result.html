@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Stock Result</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Stock Analysis</h1>
+        <hr>
+
+        <div th:if="${error}" class="error-message">
+            <p th:text="${error}"></p>
+        </div>
+
+        <div th:if="${strategyResult}">
+            <div class="strategy-container">
+                <h2>Strategy: <span th:text="${strategy}"></span></h2>
+                <p>Suggestion: <span th:text="${strategyResult.suggestion}" th:classappend="${strategyResult.suggestion == 'BUY' ? 'suggestion-buy' : (strategyResult.suggestion == 'SELL' ? 'suggestion-sell' : 'suggestion-hold')}"></span></p>
+                <p>Value: <span th:text="${strategyResult.value}"></span></p>
+            </div>
+        </div>
+
+        <div th:if="${#lists.isEmpty(labels) == false}">
+            <div class="chart-container">
+                <canvas id="stockChart" width="800" height="400"></canvas>
+            </div>
+            <script th:inline="javascript">
+                var labels = /*[[${labels}]]*/ [];
+                var prices = /*[[${prices}]]*/ [];
+
+                const ctx = document.getElementById('stockChart').getContext('2d');
+                const chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: /*[[${symbol}]]*/ 'Stock',
+                            data: prices,
+                            borderColor: 'rgb(75, 192, 192)',
+                            tension: 0.1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: true }
+                        }
+                    }
+                });
+            </script>
+        </div>
+
+        <a href="/" class="back-link">Back to Home</a>
+    </div>
+</body>
+</html>

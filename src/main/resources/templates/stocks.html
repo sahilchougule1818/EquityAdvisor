@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Stock Result</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<h2 th:text="'Stock Data for ' + ${symbol}"></h2>
+<h3 th:text="'Selected Strategy: ' + ${strategy}"></h3>
+
+<h3 th:if="${strategyResult != null}" th:text="'Strategy Suggestion: ' + ${strategyResult.suggestion}"></h3>
+<h3 th:if="${strategyResult == null}">Strategy Suggestion: -</h3>
+
+<div th:if="${strategyResult != null}">
+    <p th:text="'Computed Value: ' + ${strategyResult.value}"></p>
+</div>
+
+<div th:if="${error}">
+    <p th:text="${error}" style="color:red;"></p>
+</div>
+
+<canvas id="stockChart" width="800" height="400"></canvas>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const labels = /*[[${labels}]]*/ [];
+    const prices = /*[[${prices}]]*/ [];
+
+    const ctx = document.getElementById('stockChart').getContext('2d');
+    const chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Closing Price',
+                data: prices,
+                borderColor: 'blue',
+                backgroundColor: 'rgba(0,0,255,0.1)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: true },
+                tooltip: { mode: 'index', intersect: false }
+            },
+            scales: {
+                x: { title: { display: true, text: 'Date' } },
+                y: { title: { display: true, text: 'Price' }, beginAtZero: false }
+            }
+        }
+    });
+    /*]]>*/
+</script>
+
+<br>
+<a href="/">Back</a>
+
+</body>
+</html>
